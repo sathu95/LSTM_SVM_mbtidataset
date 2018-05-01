@@ -1,0 +1,74 @@
+#!/usr/bin/env python2
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Mar 19 22:40:47 2018
+
+@author: sathu
+"""
+
+
+#loading libraries
+import re
+import numpy as np
+import tensorflow as tf
+import collections
+from collections import Counter
+import pandas as pd
+
+
+#Loading the raw dataset
+
+df = pd.read_csv('mbti_1.csv')
+print(df.head(10))
+print("*"*40)
+print(df.info())
+
+#creating new column with words per tweet of each person
+df['words_per_comment'] = df['posts'].apply(lambda x: len(x.split())/50)
+print(df.head())
+
+
+#creating 4 new columns dividing the people by introversion/extroversion, intuition/sensing, and so on.
+
+map1 = {"I": 0, "E": 1}
+map2 = {"N": 0, "S": 1}
+map3 = {"T": 0, "F": 1}
+map4 = {"J": 0, "P": 1}
+df['I-E'] = df['type'].astype(str).str[0]
+df['I-E'] = df['I-E'].map(map1)
+df['N-S'] = df['type'].astype(str).str[1]
+df['N-S'] = df['N-S'].map(map2)
+df['T-F'] = df['type'].astype(str).str[2]
+df['T-F'] = df['T-F'].map(map3)
+df['J-P'] = df['type'].astype(str).str[3]
+df['J-P'] = df['J-P'].map(map4)
+print(df.head(10))
+
+
+#creating new columns showing the amount of questionmarks per comment, exclamations or other types, which might be useful later
+
+df['http_per_comment'] = df['posts'].apply(lambda x: x.count('http'))
+df['music_per_comment'] = df['posts'].apply(lambda x: x.count('music'))
+df['question_per_comment'] = df['posts'].apply(lambda x: x.count('?'))
+df['img_per_comment'] = df['posts'].apply(lambda x: x.count('jpg'))
+df['excl_per_comment'] = df['posts'].apply(lambda x: x.count('!'))
+df['ellipsis_per_comment'] = df['posts'].apply(lambda x: x.count('...'))
+
+print(df.head(10))
+
+#Saving csv with the new columns created along with already existing data
+df.to_csv('mbti_normalized.csv')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
